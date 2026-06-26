@@ -2,9 +2,11 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-const tareasRoutes = require('./routes/tareas');
-
 app.use(express.json());
+
+require('./config/database');
+
+const tareasRoutes = require('./routes/tareas');
 
 app.use('/tareas', tareasRoutes);
 
