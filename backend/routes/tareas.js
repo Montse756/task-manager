@@ -20,4 +20,35 @@ router.post('/', (req, res) => {
   res.json({ id: resultado.lastInsertRowid, mensaje: 'Tarea creada' });
 });
 
+// Editar una tarea
+router.put('/:id', (req, res) => {
+  const { titulo, descripcion, prioridad, estado, fecha_limite } = req.body;
+  const { id } = req.params;
+
+  const resultado = db.prepare(`
+    UPDATE tareas 
+    SET titulo = ?, descripcion = ?, prioridad = ?, estado = ?, fecha_limite = ?
+    WHERE id = ?
+  `).run(titulo, descripcion, prioridad, estado, fecha_limite, id);
+
+  if (resultado.changes === 0) {
+    return res.status(404).json({ mensaje: 'Tarea no encontrada' });
+  }
+
+  res.json({ mensaje: 'Tarea actualizada' });
+});
+
+// Eliminar una tarea
+router.delete('/:id', (req, res) => {
+  const { id } = req.params;
+
+  const resultado = db.prepare('DELETE FROM tareas WHERE id = ?').run(id);
+
+  if (resultado.changes === 0) {
+    return res.status(404).json({ mensaje: 'Tarea no encontrada' });
+  }
+
+  res.json({ mensaje: 'Tarea eliminada' });
+});
+
 module.exports = router;
