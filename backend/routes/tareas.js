@@ -1,15 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/database');
+const verificarToken = require('../middleware/auth');
 
 // Obtener todas las tareas
-router.get('/', (req, res) => {
+router.get('/', verificarToken, (req, res) => {
   const tareas = db.prepare('SELECT * FROM tareas').all();
   res.json(tareas);
 });
 
 // Crear una tarea
-router.post('/', (req, res) => {
+router.post('/', verificarToken, (req, res) => {
   const { titulo, descripcion, prioridad, fecha_limite } = req.body;
   
   const resultado = db.prepare(`
@@ -21,7 +22,7 @@ router.post('/', (req, res) => {
 });
 
 // Editar una tarea
-router.put('/:id', (req, res) => {
+router.put('/:id', verificarToken, (req, res) => {
   const { titulo, descripcion, prioridad, estado, fecha_limite } = req.body;
   const { id } = req.params;
 
@@ -39,7 +40,7 @@ router.put('/:id', (req, res) => {
 });
 
 // Eliminar una tarea
-router.delete('/:id', (req, res) => {
+router.delete('/:id', verificarToken, (req, res) => {
   const { id } = req.params;
 
   const resultado = db.prepare('DELETE FROM tareas WHERE id = ?').run(id);
